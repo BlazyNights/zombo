@@ -1,2 +1,2 @@
 # zombo
-A simple python script to run a bath of FFMPEG conversions
+A simple python script to run a batch of FFMPEG conversions
