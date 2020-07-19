@@ -22,9 +22,10 @@ if not os.path.isdir(output_path):
 
 # Run the commands, mapping the input and output lists 1:1
 for in_item, out_item in zip(input_list, output_list):
-    command = shlex.split(f'"{ffmpeg_path}"'
-                          f' -i "{os.path.join(input_path, in_item)}"'
-                          f' {ffmpeg_args}'
-                          f' "{os.path.join(output_path, out_item)}"')
+    command = f'"{ffmpeg_path}"'\
+              f' -i "{os.path.join(input_path, in_item)}"'\
+              f' {ffmpeg_args}'\
+              f' "{os.path.join(output_path, out_item)}"'
     print(command)
+    command = shlex.split(command)
     subprocess.run(command, check=True)
