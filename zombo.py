@@ -3,9 +3,28 @@ import os
 import shlex
 import configparser
 
+
+def run_command(__command: str, print_only=False):
+    """
+    Runs a given str on the system shell.
+    :param __command: str, command to run in shell
+    :param print_only: bool, default False, use if you want to just preview the command
+    :return: None
+    """
+    if print_only:
+        print(f'{__command} \n')
+
+    else:
+        print(f'Running command: {__command} \n')
+        __command = shlex.split(__command)
+        subprocess.run(__command, check=True)
+
+
 # Read config file
 parser = configparser.ConfigParser()
 parser.read('zombo.ini')
+
+preview_mode = bool(int(parser.get('preview', 'print_only')))
 
 ffmpeg_path = parser.get('ffmpeg', 'path')
 ffmpeg_args = parser.get('ffmpeg', 'args')
@@ -26,6 +45,4 @@ for in_item, out_item in zip(input_list, output_list):
               f' -i "{os.path.join(input_path, in_item)}"'\
               f' {ffmpeg_args}'\
               f' "{os.path.join(output_path, out_item)}"'
-    print(command)
-    command = shlex.split(command)
-    subprocess.run(command, check=True)
+    run_command(command, print_only=preview_mode)
