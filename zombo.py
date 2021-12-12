@@ -33,16 +33,30 @@ input_path = parser.get('input', 'path')
 # Filter empty entries, turn it into a list
 input_list = list(filter(None, parser.get('input', 'files').splitlines()))
 
+use_additional_files = bool(int(parser.get('additional_files', 'use_additional_files')))
+additional_files_path = parser.get('additional_files', 'path')
+additional_files_list = list(filter(None, parser.get('additional_files', 'files').splitlines()))
+
 output_path = parser.get('output', 'path')
 output_list = list(filter(None, parser.get('output', 'files').splitlines()))
 if not os.path.isdir(output_path):
     os.mkdir(output_path)
 
 
-# Run the commands, mapping the input and output lists 1:1
-for in_item, out_item in zip(input_list, output_list):
-    command = f'"{ffmpeg_path}"'\
-              f' -i "{os.path.join(input_path, in_item)}"'\
-              f' {ffmpeg_args}'\
-              f' "{os.path.join(output_path, out_item)}"'
-    run_command(command, print_only=preview_mode)
+# Run the commands, mapping the input and output lists 1:1 (or 1:1:1 if using additional files)
+if use_additional_files:
+    for in_item, additional_file, out_item in zip(input_list, additional_files_list, output_list):
+        command = f'"{ffmpeg_path}"' \
+                  f' -i "{os.path.join(input_path, in_item)}"' \
+                  f' -i "{os.path.join(additional_files_path, additional_file)}"' \
+                  f' {ffmpeg_args}' \
+                  f' "{os.path.join(output_path, out_item)}"'
+        run_command(command, print_only=preview_mode)
+
+else:
+    for in_item, out_item in zip(input_list, output_list):
+        command = f'"{ffmpeg_path}"'\
+                  f' -i "{os.path.join(input_path, in_item)}"'\
+                  f' {ffmpeg_args}'\
+                  f' "{os.path.join(output_path, out_item)}"'
+        run_command(command, print_only=preview_mode)
