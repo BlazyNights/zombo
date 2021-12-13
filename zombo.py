@@ -29,7 +29,10 @@ def main():
     preview_mode = bool(int(parser.get('preview', 'print_only')))
 
     ffmpeg_path = parser.get('ffmpeg', 'path')
-    ffmpeg_args = parser.get('ffmpeg', 'args')
+    ffmpeg_args = parser.get('ffmpeg', 'args').replace('\n', ' ').strip()
+    # Remove extra whitespace
+    while '  ' in ffmpeg_args:
+        ffmpeg_args = ffmpeg_args.replace('  ', ' ')
 
     input_path = parser.get('input', 'path')
     # Filter empty entries, turn it into a list
